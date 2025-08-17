@@ -107,7 +107,7 @@ function playGame(garbCols, startQueue, maxPieces) {
 
             if (garbCols && !board.dta.some(r => r.some(c => c == -1))) done = 1;
 
-            ctx.fillStyle = "#e9e9e9";
+            ctx.fillStyle = "#2a2a2a";
             ctx.fillRect(0, 0, 1000, 1000);
             if (done) board.dta = board.dta.map(r => r.map(q => -!!q));
             board.draw(ctx);
@@ -115,13 +115,13 @@ function playGame(garbCols, startQueue, maxPieces) {
                 if (!queue[i]) break;
                 ctx.fillStyle = PIECES[queue[i]].color;
                 for (const mino of PIECES[queue[i]].minos) {
-                    ctx.fillRect(550 + 30 * mino[0], 30 + 100 * i - 30 * mino[1], 30, 30);
+                    ctx.fillRect(550 + 30 * mino[0], 60 + 100 * i - 30 * mino[1], 30, 30);
                 }
             }
             if (hold.piece) {
                 ctx.fillStyle = PIECES[hold.piece].color;
                 for (const mino of PIECES[hold.piece].minos) {
-                    ctx.fillRect(50 + 30 * mino[0], 30 - 30 * mino[1], 30, 30);
+                    ctx.fillRect(50 + 30 * mino[0], 60 - 30 * mino[1], 30, 30);
                 }
             }
         }

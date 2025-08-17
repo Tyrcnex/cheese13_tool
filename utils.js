@@ -121,7 +121,7 @@ class Board {
         for (let x = 0; x < 10; x++) {
             for (let y = 0; y < 20; y++) {
                 let boardMino = this.dta[y][x];
-                ctx.fillStyle = boardMino == -1 ? "#6e6e6e" : boardMino == 0 ? "#fff" : PIECES[ORDER[boardMino - 1]].color;
+                ctx.fillStyle = boardMino == -1 ? "#a3a3a3" : boardMino == 0 ? "#000" : PIECES[ORDER[boardMino - 1]].color;
                 ctx.fillRect(150 + 30 * x, 30 * (20 - y), 30, 30);
             }
         }
@@ -130,7 +130,7 @@ class Board {
             let shadowPiece = this.currentPiece.clone();
             shadowPiece.offset[1] -= this.dist();
 
-            ctx.fillStyle = "#bfbfbf";
+            ctx.fillStyle = "#444444ff";
             for (const mino of shadowPiece.minos()) {
                 ctx.fillRect(150 + 30 * mino[0], 30 * (20 - mino[1]), 30, 30);
             }
