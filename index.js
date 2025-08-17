@@ -29,10 +29,10 @@ function playGame(garbCols, startQueue, maxPieces) {
             return;
         }
         if (t - lastRender >= 1000 / 60) {
-            let horizontalIdx = keysPressed.findLastIndex(x => x.code == "ArrowLeft" || x.code == "ArrowRight");
+            let horizontalIdx = keysPressed.findLastIndex(x => vKey("moveLeft", x.code) || vKey("moveRight", x.code));
             if (horizontalIdx > -1) {
                 let key = keysPressed[horizontalIdx];
-                let dir = key.code == "ArrowLeft" ? -1 : 1;
+                let dir = vKey("moveLeft", key.code) ? -1 : 1;
                 if (!key.active1) {
                     board.moveX(dir);
                     key.active1 = true;
@@ -49,12 +49,12 @@ function playGame(garbCols, startQueue, maxPieces) {
                 }
             }
 
-            let verticalIdx = keysPressed.findLastIndex(x => x.code == "ArrowDown" || x.code == "Space");
+            let verticalIdx = keysPressed.findLastIndex(x => vKey("softDrop", x.code) || vKey("hardDrop", x.code));
             if (verticalIdx > -1) {
                 let key = keysPressed[verticalIdx];
                 if (!key.pressed) {
                     board.moveY(-(CONFIG.sdr && key.code == "ArrowDown" ? Math.min(40, Math.floor((t - key.lastT) / CONFIG.sdr)) : 40));
-                    if (key.code == "Space") {
+                    if (vKey("hardDrop", key.code)) {
                         board.placeMinos();
                         placedPieces++;
                         if (!queue.length || placedPieces > maxPieces) {
@@ -74,25 +74,25 @@ function playGame(garbCols, startQueue, maxPieces) {
                 }
             }
 
-            let keyCW = keysPressed.findLast(x => x.code == "ArrowUp");
+            let keyCW = keysPressed.findLast(x => vKey("rotateCW", x.code));
             if (keyCW && !keyCW.pressed) {
                 keyCW.pressed = true;
                 board.rotate(1);
             }
 
-            let keyCCW = keysPressed.findLast(x => x.code == "KeyZ");
+            let keyCCW = keysPressed.findLast(x => vKey("rotateCCW", x.code));
             if (keyCCW && !keyCCW.pressed) {
                 keyCCW.pressed = true;
                 board.rotate(-1);
             }
 
-            let key180 = keysPressed.findLast(x => x.code == "KeyA");
+            let key180 = keysPressed.findLast(x => vKey("rotate180", x.code));
             if (key180 && !key180.pressed) {
                 key180.pressed = true;
                 board.rotate(2);
             }
 
-            let keyHold = keysPressed.findLast(x => x.code == "KeyC");
+            let keyHold = keysPressed.findLast(x => vKey("hold", x.code));
             if (keyHold && !keyHold.pressed && hold.canHold) {
                 keyHold.pressed = true;
                 let oldHoldPiece = hold.piece;
@@ -124,7 +124,7 @@ function playGame(garbCols, startQueue, maxPieces) {
         }
         requestAnimationFrame(loop);
     }
-    
+
     requestAnimationFrame(loop);
 }
 

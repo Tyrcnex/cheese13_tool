@@ -150,3 +150,20 @@ function appendQueue(q) {
     }
     q.push(...pieces);
 }
+
+const DEFAULT_KEYS = {
+    moveLeft: ["ArrowLeft"],
+    moveRight: ["ArrowRight"],
+    softDrop: ["ArrowDown"],
+    hardDrop: ["Space"],
+    rotateCW: ["KeyX", "ArrowUp"],
+    rotateCCW: ["KeyZ"],
+    rotate180: ["KeyA"],
+    hold: ["KeyC"]
+}
+
+if (!localStorage.KEYS) {
+    localStorage.setItem("KEYS", JSON.stringify(DEFAULT_KEYS));
+}
+
+const vKey = (type, key) => JSON.parse(localStorage.KEYS)[type]?.some(x => x.toLowerCase() == key.toLowerCase());
