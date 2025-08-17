@@ -8,11 +8,6 @@ const PIECES = {
     L: { minos: [[-1, 0], [0, 0], [1, 0], [1, 1]], color: "#fc9c26" },
     T: { minos: [[-1, 0], [0, 0], [1, 0], [0, 1]], color: "#f226fc" },
 };
-const CONFIG = {
-    das: 100,
-    arr: 0,
-    sdr: 0 // soft drop rate, in ms
-};
 const KICKS = {
     kicks: {
         "01": [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]], 

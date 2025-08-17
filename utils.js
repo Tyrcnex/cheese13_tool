@@ -151,6 +151,12 @@ function appendQueue(q) {
     q.push(...pieces);
 }
 
+const DEFAULT_HANDLING = {
+    das: 100,
+    arr: 0,
+    sdr: 0 // soft drop rate, in ms
+};
+
 const DEFAULT_KEYS = {
     moveLeft: ["ArrowLeft"],
     moveRight: ["ArrowRight"],
@@ -166,4 +172,9 @@ if (!localStorage.KEYS) {
     localStorage.setItem("KEYS", JSON.stringify(DEFAULT_KEYS));
 }
 
+if (!localStorage.HANDLING) {
+    localStorage.setItem("HANDLING", JSON.stringify(DEFAULT_HANDLING));
+}
+
 const vKey = (type, key) => JSON.parse(localStorage.KEYS)[type]?.some(x => x.toLowerCase() == key.toLowerCase());
+const handl = v => JSON.parse(localStorage.HANDLING)[v];

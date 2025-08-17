@@ -1,5 +1,6 @@
 const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
+const timer = document.getElementById("time");
 
 let keysPressed = [];
 window.onblur = window.onfocus = window.onfocusout = window.onvisibilitychange = _ => keysPressed = [];
@@ -22,10 +23,12 @@ function playGame(garbCols, startQueue, maxPieces) {
     }
 
     let lastRender = 0;
-    let done = false;
+    let done = 0; // 0 = not done, -1 = fail, 1 = success
     let placedPieces = 0;
     function loop(t) {
+        timer.textContent = `Time: ${(performance.now() / 1000).toFixed(2)}`
         if (done) {
+            timer.style.color = done == 1 ? "#3fc600" : "#ff0000"
             return;
         }
         if (t - lastRender >= 1000 / 60) {
@@ -38,13 +41,13 @@ function playGame(garbCols, startQueue, maxPieces) {
                     key.active1 = true;
                 }
 
-                if (!key.active2 && t - key.t > CONFIG.das) {
+                if (!key.active2 && t - key.t > handl("das")) {
                     key.active2 = true;
                     key.lastT = t;
                 }
 
-                if (t - key.t > CONFIG.das && t - key.lastT > CONFIG.arr) {
-                    board.moveX(dir * (CONFIG.arr ? Math.min(10, Math.floor((t - key.lastT) / CONFIG.arr)) : 10));
+                if (t - key.t > handl("das") && t - key.lastT > handl("arr")) {
+                    board.moveX(dir * (handl("arr") ? Math.min(10, Math.floor((t - key.lastT) / handl("arr"))) : 10));
                     key.lastT = t;
                 }
             }
@@ -53,12 +56,12 @@ function playGame(garbCols, startQueue, maxPieces) {
             if (verticalIdx > -1) {
                 let key = keysPressed[verticalIdx];
                 if (!key.pressed) {
-                    board.moveY(-(CONFIG.sdr && key.code == "ArrowDown" ? Math.min(40, Math.floor((t - key.lastT) / CONFIG.sdr)) : 40));
+                    board.moveY(-(handl("sdr") && key.code == "ArrowDown" ? Math.min(40, Math.floor((t - key.lastT) / handl("sdr"))) : 40));
                     if (vKey("hardDrop", key.code)) {
                         board.placeMinos();
                         placedPieces++;
                         if (!queue.length || placedPieces > maxPieces) {
-                            done = true;
+                            done = -1; // this might be changed later
                         }
                         board.currentPiece = queue.length ? new PieceLocation(queue.shift(), [4, 18], 0) : undefined;
                         key.pressed = true;
@@ -66,7 +69,7 @@ function playGame(garbCols, startQueue, maxPieces) {
                         hold.canHold = true;
                         for (let y = 18; y < 40; y++) {
                             if (board.dta[y].some(c => c != 0)) {
-                                done = true;
+                                done = -1;
                                 break;
                             }
                         }
@@ -98,11 +101,11 @@ function playGame(garbCols, startQueue, maxPieces) {
                 let oldHoldPiece = hold.piece;
                 hold = { canHold: false, piece: board.currentPiece.piece };
                 let p = oldHoldPiece || queue.shift();
-                if (!p) done = true;
+                if (!p) done = -1;
                 board.currentPiece = p ? new PieceLocation(p, [4, 18], 0) : undefined;
             }
 
-            if (garbCols && !board.dta.some(r => r.some(c => c == -1))) done = true;
+            if (garbCols && !board.dta.some(r => r.some(c => c == -1))) done = 1;
 
             ctx.fillStyle = "#e9e9e9";
             ctx.fillRect(0, 0, 1000, 1000);

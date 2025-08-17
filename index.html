@@ -5,8 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cheese race</title>
     <style>
-        html, body {margin: 0; height: 100%; overflow: hidden}
-        
+        html, body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace
+        }
+
+        #time {
+            margin: 0;
+            right: 50%;
+            transform: translate(50%,50%);
+            position: absolute;
+            font-size: 1.5vw;
+        }
+
         #board {
             right: 50%;
             bottom: 50%;
@@ -14,13 +27,14 @@
             position: absolute;
 
             height: 90vh;
-            width: 90vh;
+            width: 70vh;
         }
     </style>
 </head>
 <body>
     <script src="maps.js"></script>
-    <canvas id="board" width="1000" height="1000"></canvas>
+    <p id="time">Time</p>
+    <canvas id="board" width="700" height="900"></canvas>
     <script src="data.js"></script>
     <script src="utils.js"></script>
     <script src="index.js"></script>
