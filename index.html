@@ -31,12 +31,29 @@
             height: 90vh;
             width: 70vh;
         }
+
+        #solution_div {
+            background-color: rgb(79, 79, 79);
+            width: 25vw;
+            display: none;
+        }
+
+        #solution_visual {
+            height: 50vh;
+            width: 25vh;
+        }
     </style>
 </head>
 <body>
     <script src="maps.js"></script>
     <p id="time">Time</p>
     <canvas id="board" width="700" height="900"></canvas>
+    <button id="show_solution">show solution</button>
+    <div id="solution_div">
+        <button id="left">&lt;</button>
+        <button id="right">&gt;</button>
+        <canvas id="solution_visual" width="450" height="900"></canvas>
+    </div>
     <script src="data.js"></script>
     <script src="utils.js"></script>
     <script src="index.js"></script>

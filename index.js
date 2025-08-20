@@ -132,5 +132,36 @@ function playGame(garbCols, startQueue, maxPieces) {
 }
 
 let randomMap = maps[Math.floor(Math.random() * maps.length)];
-console.log(randomMap);
-playGame(randomMap.garbCols, randomMap.queue);
+randomMap.games = [];
+let game = new Board(new PieceLocation("Z", [4, 19], 0));
+for (const col of randomMap.garb_cols) {
+    game.pushGarbage(col);
+}
+for (const move of randomMap.locs) {
+    game.currentPiece = new PieceLocation(move.piece, [move.x, move.y], ["North", "East", "South", "West"].indexOf(move.rotation));
+    randomMap.games.push(new Board(game.currentPiece.clone(), structuredClone(game.dta)));
+    game.placeMinos();
+}
+playGame(randomMap.garb_cols, randomMap.queue);
+
+const solutionCanvas = document.getElementById("solution_visual");
+const solutionCtx = solutionCanvas.getContext("2d");
+let iii = 0;
+
+const showSolutionButton = document.getElementById("show_solution");
+const solutionDiv = document.getElementById("solution_div");
+const leftButton = document.getElementById("left");
+const rightButton = document.getElementById("right");
+
+showSolutionButton.onclick = _ => {
+    solutionDiv.style.display = "block";
+    randomMap.games[iii].draw(solutionCtx);
+}
+leftButton.onclick = _ => {
+    iii = Math.max(iii - 1, 0);
+    randomMap.games[iii].draw(solutionCtx);
+}
+rightButton.onclick = _ => {
+    iii = Math.min(iii + 1, randomMap.games.length - 1);
+    randomMap.games[iii].draw(solutionCtx);
+}
