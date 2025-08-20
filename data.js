@@ -8,6 +8,7 @@ const PIECES = {
     L: { minos: [[-1, 0], [0, 0], [1, 0], [1, 1]], color: "#fc9c26" },
     T: { minos: [[-1, 0], [0, 0], [1, 0], [0, 1]], color: "#f226fc" },
 };
+
 const KICKS = {
     kicks: {
         "01": [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]], 
@@ -38,3 +39,22 @@ const KICKS = {
         "02": [[1, -1],[1, 0],[1, -1]],
     }
 };
+
+const DEFAULT_HANDLING = {
+    das: 100,
+    arr: 0,
+    sdr: 0 // soft drop rate, in ms
+};
+
+const DEFAULT_KEYS = {
+    moveLeft: ["ArrowLeft"],
+    moveRight: ["ArrowRight"],
+    softDrop: ["ArrowDown"],
+    hardDrop: ["Space"],
+    rotateCW: ["KeyX", "ArrowUp"],
+    rotateCCW: ["ControlLeft", "ControlRight", "KeyZ"],
+    rotate180: ["KeyA"],
+    hold: ["ShiftLeft", "ShiftRight", "KeyC"],
+    retry: ["KeyR"],
+    newMap: ["KeyT"]
+}

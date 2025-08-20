@@ -1,6 +1,12 @@
 const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
 const timer = document.getElementById("time");
+let showSolutionButton = document.getElementById("show_solution");
+const solutionDiv = document.getElementById("solution_div");
+let leftButton = document.getElementById("left");
+let rightButton = document.getElementById("right");
+const solutionCanvas = document.getElementById("solution_visual");
+const solutionCtx = solutionCanvas.getContext("2d");
 
 let keysPressed = [];
 window.onblur = window.onfocus = window.onfocusout = window.onvisibilitychange = _ => keysPressed = [];
@@ -10,25 +16,75 @@ window.onkeydown = e => {
 }
 window.onkeyup = e => keysPressed.splice(keysPressed.findIndex(x => x.code == e.code), 1);
 
-function playGame(garbCols, startQueue, maxPieces) {
-    let queue = startQueue || [];
+function replaceSelf(node) {
+    const clone = node.cloneNode(true);
+    node.replaceWith(clone);
+
+    return clone;
+}
+
+function playGame(map) {
+    let queue = [...map.queue];
     let hold = { canHold: true, piece: undefined };
+    let maxPieces = map.queue.length;
 
-    if (!startQueue) appendQueue(queue);
+    let board = new Board(new PieceLocation(queue.shift(), [4, 18], 0));
 
-    const board = new Board(new PieceLocation(queue.shift(), [4, 18], 0));
-
-    for (const col of garbCols) {
+    for (const col of map.garb_cols) {
         board.pushGarbage(col);
     }
 
     let lastRender = 0;
     let done = 0; // 0 = not done, -1 = fail, 1 = success
     let placedPieces = 0;
+
+    let iii = 0;
+
+    solutionDiv.style.display = "none";
+
+    // remove event listener ew way
+    showSolutionButton = replaceSelf(showSolutionButton);
+    leftButton = replaceSelf(leftButton);
+    rightButton = replaceSelf(rightButton);
+
+    showSolutionButton.onclick = _ => {
+        console.log("hi");
+        solutionDiv.style.display = "block";
+        map.games[iii].draw(solutionCtx);
+    }
+    leftButton.onclick = _ => {
+        iii = Math.max(iii - 1, 0);
+        map.games[iii].draw(solutionCtx);
+    }
+    rightButton.onclick = _ => {
+        iii = Math.min(iii + 1, rm.games.length - 1);
+        map.games[iii].draw(solutionCtx);
+    }
+
     function loop(t) {
-        timer.textContent = `Time: ${(performance.now() / 1000).toFixed(2)}`
+        timer.textContent = `Time: ${Math.max(0, (t - 1500) / 1000).toFixed(2)}`;
+        if (t < 1500) {
+            ctx.fillStyle = "#2a2a2a";
+            ctx.fillRect(0, 0, 1000, 1000);
+            ctx.fillStyle = "#f1ee2eff";
+            ctx.font = `48px "Jetbrains Mono"`
+            const str = t < 500 ? "READY" : t < 1000 ? "" : "GO";
+            ctx.fillText(str, 350 - ctx.measureText(str).width / 2, 450);
+            requestAnimationFrame(loop);
+            return;
+        }
+        if (keysPressed.some(x => vKey("retry", x.code))) {
+            playGame(map);
+            return;
+        }
+        if (keysPressed.some(x => vKey("newMap", x.code))) {
+            let rm = makeMap();
+            playGame(rm);
+            return;
+        }
+        timer.style.color = done == 0 ? "rgb(243, 243, 243)" : done == 1 ? "#3fc600" : "#ff0000";
         if (done) {
-            timer.style.color = done == 1 ? "#3fc600" : "#ff0000"
+            requestAnimationFrame(loop);
             return;
         }
         if (t - lastRender >= 1000 / 60) {
@@ -65,7 +121,6 @@ function playGame(garbCols, startQueue, maxPieces) {
                         }
                         board.currentPiece = queue.length ? new PieceLocation(queue.shift(), [4, 18], 0) : undefined;
                         key.pressed = true;
-                        if (queue.length < 7) if (!startQueue) appendQueue(queue);
                         hold.canHold = true;
                         for (let y = 18; y < 40; y++) {
                             if (board.dta[y].some(c => c != 0)) {
@@ -105,7 +160,7 @@ function playGame(garbCols, startQueue, maxPieces) {
                 board.currentPiece = p ? new PieceLocation(p, [4, 18], 0) : undefined;
             }
 
-            if (garbCols && !board.dta.some(r => r.some(c => c == -1))) done = 1;
+            if (map.garb_cols && !board.dta.some(r => r.some(c => c == -1))) done = 1;
 
             ctx.fillStyle = "#2a2a2a";
             ctx.fillRect(0, 0, 1000, 1000);
@@ -124,6 +179,9 @@ function playGame(garbCols, startQueue, maxPieces) {
                     ctx.fillRect(50 + 30 * mino[0], 60 - 30 * mino[1], 30, 30);
                 }
             }
+            // testing purposes
+            // ctx.fillStyle = "#11582fe4";
+            // ctx.fillRect(0, 0, 1000, 1000);
         }
         requestAnimationFrame(loop);
     }
@@ -131,37 +189,19 @@ function playGame(garbCols, startQueue, maxPieces) {
     requestAnimationFrame(loop);
 }
 
-let randomMap = maps[Math.floor(Math.random() * maps.length)];
-randomMap.games = [];
-let game = new Board(new PieceLocation("Z", [4, 19], 0));
-for (const col of randomMap.garb_cols) {
-    game.pushGarbage(col);
+function makeMap() {
+    let rm = maps[Math.floor(Math.random() * maps.length)];
+    rm.games = [];
+    let game = new Board(new PieceLocation("Z", [4, 19], 0));
+    for (const col of rm.garb_cols) {
+        game.pushGarbage(col);
+    }
+    for (const move of rm.locs) {
+        game.currentPiece = new PieceLocation(move.piece, [move.x, move.y], ["North", "East", "South", "West"].indexOf(move.rotation));
+        rm.games.push(new Board(game.currentPiece.clone(), structuredClone(game.dta)));
+        game.placeMinos();
+    }
+    return rm;
 }
-for (const move of randomMap.locs) {
-    game.currentPiece = new PieceLocation(move.piece, [move.x, move.y], ["North", "East", "South", "West"].indexOf(move.rotation));
-    randomMap.games.push(new Board(game.currentPiece.clone(), structuredClone(game.dta)));
-    game.placeMinos();
-}
-playGame(randomMap.garb_cols, randomMap.queue);
-
-const solutionCanvas = document.getElementById("solution_visual");
-const solutionCtx = solutionCanvas.getContext("2d");
-let iii = 0;
-
-const showSolutionButton = document.getElementById("show_solution");
-const solutionDiv = document.getElementById("solution_div");
-const leftButton = document.getElementById("left");
-const rightButton = document.getElementById("right");
-
-showSolutionButton.onclick = _ => {
-    solutionDiv.style.display = "block";
-    randomMap.games[iii].draw(solutionCtx);
-}
-leftButton.onclick = _ => {
-    iii = Math.max(iii - 1, 0);
-    randomMap.games[iii].draw(solutionCtx);
-}
-rightButton.onclick = _ => {
-    iii = Math.min(iii + 1, randomMap.games.length - 1);
-    randomMap.games[iii].draw(solutionCtx);
-}
+let randomMap = makeMap();
+playGame(randomMap);

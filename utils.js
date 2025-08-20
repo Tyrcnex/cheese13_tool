@@ -151,25 +151,20 @@ function appendQueue(q) {
     q.push(...pieces);
 }
 
-const DEFAULT_HANDLING = {
-    das: 100,
-    arr: 0,
-    sdr: 0 // soft drop rate, in ms
-};
-
-const DEFAULT_KEYS = {
-    moveLeft: ["ArrowLeft"],
-    moveRight: ["ArrowRight"],
-    softDrop: ["ArrowDown"],
-    hardDrop: ["Space"],
-    rotateCW: ["KeyX", "ArrowUp"],
-    rotateCCW: ["KeyZ"],
-    rotate180: ["KeyA"],
-    hold: ["KeyC"]
-}
-
 if (!localStorage.KEYS) {
     localStorage.setItem("KEYS", JSON.stringify(DEFAULT_KEYS));
+} else {
+    const newKeys = JSON.parse(localStorage.KEYS);
+    for (const key in DEFAULT_KEYS) {
+        if (!newKeys[key]) {
+            newKeys[key] = DEFAULT_KEYS[key];
+        }
+    }
+    const allKeys = Object.values(newKeys).flat();
+    if ((new Set(allKeys)).size < allKeys.length) {
+        alert("config clash detected! please modify localStorage.KEYS in dev console");
+    }
+    localStorage.setItem("KEYS", JSON.stringify(newKeys));
 }
 
 if (!localStorage.HANDLING) {
