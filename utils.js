@@ -173,3 +173,5 @@ if (!localStorage.HANDLING) {
 
 const vKey = (type, key) => JSON.parse(localStorage.KEYS)[type]?.some(x => x.toLowerCase() == key.toLowerCase());
 const handl = v => JSON.parse(localStorage.HANDLING)[v];
+
+const maps = ALL_MAPS.split("\n").map(x => JSON.parse(x));
