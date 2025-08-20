@@ -28,4 +28,4 @@ localStorage.setItem("HANDLING", JSON.stringify(myHandling));
 
 default keys are defined at the bottom of `data.js`. have a look yourself.
 
-the maps are also pregenerated, so theres only about 2000 or so maps to choose from. i will fix this in the future.
+the maps are also pregenerated, so theres only about 5000 or so maps to choose from. i will fix this in the future.
