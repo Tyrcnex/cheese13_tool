@@ -61,7 +61,7 @@ function playGame(map, st) {
         map.games[iii].draw(solutionCtx);
     }
 
-    function loop(t) {
+    const bdraw = _ => {
         ctx.fillStyle = "#2a2a2a";
         ctx.fillRect(0, 0, 1000, 1000);
         if (done) board.dta = board.dta.map(r => r.map(q => -!!q));
@@ -79,7 +79,10 @@ function playGame(map, st) {
                 ctx.fillRect(50 + 30 * mino[0], 60 - 30 * mino[1], 30, 30);
             }
         }
-        
+    }
+
+    function loop(t) {
+        bdraw();
         if (!done) timer.textContent = `Time: ${Math.max(0, (t - startTime - 1500) / 1000).toFixed(2)}`;
         if (t - startTime < 1500) {
             ctx.fillStyle = "#000000ff";
@@ -181,6 +184,7 @@ function playGame(map, st) {
             }
 
             if (map.garb_cols && !board.dta.some(r => r.some(c => c == -1))) done = 1;
+            bdraw();
             // testing purposes
             // ctx.fillStyle = "#11582fe4";
             // ctx.fillRect(0, 0, 1000, 1000);
