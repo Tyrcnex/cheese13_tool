@@ -62,14 +62,34 @@ function playGame(map, st) {
     }
 
     function loop(t) {
+        ctx.fillStyle = "#2a2a2a";
+        ctx.fillRect(0, 0, 1000, 1000);
+        if (done) board.dta = board.dta.map(r => r.map(q => -!!q));
+        board.draw(ctx);
+        for (let i = 0; i < 5; i++) {
+            if (!queue[i]) break;
+            ctx.fillStyle = PIECES[queue[i]].color;
+            for (const mino of PIECES[queue[i]].minos) {
+                ctx.fillRect(550 + 30 * mino[0], 60 + 100 * i - 30 * mino[1], 30, 30);
+            }
+        }
+        if (hold.piece) {
+            ctx.fillStyle = PIECES[hold.piece].color;
+            for (const mino of PIECES[hold.piece].minos) {
+                ctx.fillRect(50 + 30 * mino[0], 60 - 30 * mino[1], 30, 30);
+            }
+        }
+        
         if (!done) timer.textContent = `Time: ${Math.max(0, (t - startTime - 1500) / 1000).toFixed(2)}`;
         if (t - startTime < 1500) {
-            ctx.fillStyle = "#2a2a2a";
-            ctx.fillRect(0, 0, 1000, 1000);
+            ctx.fillStyle = "#000000ff";
+            ctx.fillRect(150, 30, 300, 600);
             ctx.fillStyle = "#f1ee2eff";
             ctx.font = `48px "Jetbrains Mono"`
             const str = t - startTime < 500 ? "READY" : t - startTime < 1000 ? "" : "GO";
-            ctx.fillText(str, 350 - ctx.measureText(str).width / 2, 450);
+            ctx.textBaseline = 'middle'; 
+            ctx.textAlign = 'center';
+            ctx.fillText(str, 300, 330);
             requestAnimationFrame(loop);
             return;
         }
@@ -161,24 +181,6 @@ function playGame(map, st) {
             }
 
             if (map.garb_cols && !board.dta.some(r => r.some(c => c == -1))) done = 1;
-
-            ctx.fillStyle = "#2a2a2a";
-            ctx.fillRect(0, 0, 1000, 1000);
-            if (done) board.dta = board.dta.map(r => r.map(q => -!!q));
-            board.draw(ctx);
-            for (let i = 0; i < 5; i++) {
-                if (!queue[i]) break;
-                ctx.fillStyle = PIECES[queue[i]].color;
-                for (const mino of PIECES[queue[i]].minos) {
-                    ctx.fillRect(550 + 30 * mino[0], 60 + 100 * i - 30 * mino[1], 30, 30);
-                }
-            }
-            if (hold.piece) {
-                ctx.fillStyle = PIECES[hold.piece].color;
-                for (const mino of PIECES[hold.piece].minos) {
-                    ctx.fillRect(50 + 30 * mino[0], 60 - 30 * mino[1], 30, 30);
-                }
-            }
             // testing purposes
             // ctx.fillStyle = "#11582fe4";
             // ctx.fillRect(0, 0, 1000, 1000);
