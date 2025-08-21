@@ -23,7 +23,8 @@ function replaceSelf(node) {
     return clone;
 }
 
-function playGame(map) {
+function playGame(map, st) {
+    let startTime = st || performance.now();
     let queue = [...map.queue];
     let hold = { canHold: true, piece: undefined };
     let maxPieces = map.queue.length;
@@ -34,7 +35,7 @@ function playGame(map) {
         board.pushGarbage(col);
     }
 
-    let lastRender = 0;
+    let lastRender = startTime;
     let done = 0; // 0 = not done, -1 = fail, 1 = success
     let placedPieces = 0;
 
@@ -61,19 +62,19 @@ function playGame(map) {
     }
 
     function loop(t) {
-        timer.textContent = `Time: ${Math.max(0, (t - 1500) / 1000).toFixed(2)}`;
-        if (t < 1500) {
+        timer.textContent = `Time: ${Math.max(0, (t - startTime - 1500) / 1000).toFixed(2)}`;
+        if (t - startTime < 1500) {
             ctx.fillStyle = "#2a2a2a";
             ctx.fillRect(0, 0, 1000, 1000);
             ctx.fillStyle = "#f1ee2eff";
             ctx.font = `48px "Jetbrains Mono"`
-            const str = t < 500 ? "READY" : t < 1000 ? "" : "GO";
+            const str = t - startTime < 500 ? "READY" : t - startTime < 1000 ? "" : "GO";
             ctx.fillText(str, 350 - ctx.measureText(str).width / 2, 450);
             requestAnimationFrame(loop);
             return;
         }
         if (keysPressed.some(x => vKey("retry", x.code))) {
-            playGame(map);
+            playGame(map, startTime);
             return;
         }
         if (keysPressed.some(x => vKey("newMap", x.code))) {
