@@ -62,7 +62,7 @@ function playGame(map, st) {
     }
 
     function loop(t) {
-        timer.textContent = `Time: ${Math.max(0, (t - startTime - 1500) / 1000).toFixed(2)}`;
+        if (!done) timer.textContent = `Time: ${Math.max(0, (t - startTime - 1500) / 1000).toFixed(2)}`;
         if (t - startTime < 1500) {
             ctx.fillStyle = "#2a2a2a";
             ctx.fillRect(0, 0, 1000, 1000);
