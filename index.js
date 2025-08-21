@@ -48,7 +48,6 @@ function playGame(map) {
     rightButton = replaceSelf(rightButton);
 
     showSolutionButton.onclick = _ => {
-        console.log("hi");
         solutionDiv.style.display = "block";
         map.games[iii].draw(solutionCtx);
     }
@@ -57,7 +56,7 @@ function playGame(map) {
         map.games[iii].draw(solutionCtx);
     }
     rightButton.onclick = _ => {
-        iii = Math.min(iii + 1, rm.games.length - 1);
+        iii = Math.min(iii + 1, map.games.length - 1);
         map.games[iii].draw(solutionCtx);
     }
 
