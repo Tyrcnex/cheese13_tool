@@ -82,9 +82,11 @@ function playGame(map, st) {
     }
 
     function loop(t) {
-        queue.unshift(board.currentPiece.piece);
-        bdraw();
-        queue.shift();
+        if (board.currentPiece) {
+            queue.unshift(board.currentPiece.piece);
+            bdraw();
+            queue.shift();
+        }
         if (!done) timer.textContent = `Time: ${Math.max(0, (t - startTime - 2000) / 1000).toFixed(2)}`;
         if (t - startTime < 2000) {
             ctx.fillStyle = "#000000ff";
