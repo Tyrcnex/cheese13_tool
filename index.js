@@ -85,13 +85,13 @@ function playGame(map, st) {
         queue.unshift(board.currentPiece.piece);
         bdraw();
         queue.shift();
-        if (!done) timer.textContent = `Time: ${Math.max(0, (t - startTime - 1500) / 1000).toFixed(2)}`;
-        if (t - startTime < 1500) {
+        if (!done) timer.textContent = `Time: ${Math.max(0, (t - startTime - 2000) / 1000).toFixed(2)}`;
+        if (t - startTime < 2000) {
             ctx.fillStyle = "#000000ff";
             ctx.fillRect(150, 30, 300, 600);
             ctx.fillStyle = "#f1ee2eff";
             ctx.font = `48px "Jetbrains Mono"`
-            const str = t - startTime < 500 ? "READY" : t - startTime < 1000 ? "" : "GO";
+            const str = t - startTime < 1000 ? "READY" : "GO";
             ctx.textBaseline = 'middle'; 
             ctx.textAlign = 'center';
             ctx.fillText(str, 300, 330);
